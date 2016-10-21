@@ -336,9 +336,6 @@ you should place your code here."
   (setq default-input-method "chinese-pyim")
   (global-set-key (kbd "C-\\") 'toggle-input-method)
 
-  ;; sort directories first
-  (setq insert-directory-program "/usr/local/bin/gls")
-  (setq dired-listing-switches "-aBhl --group-directories-first")
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
