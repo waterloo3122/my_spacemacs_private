@@ -339,6 +339,7 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (setq powerline-default-separator 'utf-8)
 
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
