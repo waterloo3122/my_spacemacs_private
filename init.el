@@ -38,6 +38,7 @@ values."
      ;; ----------------------------------------------------------------
      ivy
      helm
+     osx
      auto-completion
      better-defaults
      emacs-lisp
