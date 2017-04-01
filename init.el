@@ -31,6 +31,12 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     python
+     javascript
+     sql
+     csv
+     nginx
+     html
      ruby
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
@@ -63,8 +69,10 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
-                                      chinese-pyim
-                                      chinese-pyim-greatdict
+                                      xml-rpc
+                                      metaweblog
+                                      org2blog
+                                      htmlize
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -114,7 +122,7 @@ values."
    ;; (default 'vim)
    dotspacemacs-editing-style 'vim
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
-   dotspacemacs-verbose-loading nil
+   dotspacemacs-verbose-loading t
    ;; Specify the startup banner. Default value is `official', it displays
    ;; the official spacemacs logo. An integer value is the index of text
    ;; banner, `random' chooses a random text banner in `core/banners'
@@ -130,7 +138,7 @@ values."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
    ;; (default nil)
-   dotspacemacs-startup-lists '()
+   dotspacemacs-startup-lists '((recents . 5) (projects . 7))
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
    ;; Default major mode of the scratch buffer (default `text-mode')
@@ -146,7 +154,7 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
+   dotspacemacs-default-font '("Source Code Pro For Powerline"
                                :size 18 
                                :weight normal
                                :width normal
@@ -196,7 +204,7 @@ values."
    ;; Size (in MB) above which spacemacs will prompt to open the large file
    ;; literally to avoid performance issues. Opening a file literally means that
    ;; no major mode or minor modes are active. (default is 1)
-   dotspacemacs-large-file-size 1
+   dotspacemacs-large-file-size 20
    ;; Location where to auto-save files. Possible values are `original' to
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
@@ -304,18 +312,22 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-(setq tramp-ssh-controlmaster-options
-      "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
+    (setq tramp-ssh-controlmaster-options
+        "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 
-  (setq configuration-layer--elpa-archives
+    (setq configuration-layer--elpa-archives
         '(("melpa-cn" . "https://elpa.zilongshanren.com/melpa/")
           ("org-cn"   . "https://elpa.zilongshanren.com/org/")
           ("gnu-cn"   . "https://elpa.zilongshanren.com/gnu/")))
 
-  (when (eq system-type 'darwin)
-    (setq insert-directory-program "/usr/local/bin/gls")
-    (setq dired-listing-switches "-aBhl --group-directories-first")
-    )
+    (when (eq system-type 'darwin)
+        (setq insert-directory-program "/usr/local/bin/gls")
+        (setq dired-listing-switches "-aBhl --group-directories-first")
+        )
+
+    ;;;deal with 'tern binary not found' problem when startup
+    (setenv "PATH" (concat (getenv "PATH") ":/Users/pp/.nvm/versions/node/v5.10.1/bin"))
+    (setq exec-path (append exec-path '("/Users/pp/.nvm/versions/node/v5.10.1/bin")))
   )
 
 (defun dotspacemacs/user-config ()
@@ -334,16 +346,75 @@ you should place your code here."
   (setcdr evil-insert-state-map nil)
   (define-key evil-insert-state-map [escape] 'evil-normal-state)
 
-  ;;add chinese pinyin input method
-  (require 'chinese-pyim)
-  (require 'chinese-pyim-greatdict)
-  (chinese-pyim-greatdict-enable)
-  (setq default-input-method "chinese-pyim")
-  (global-set-key (kbd "C-\\") 'toggle-input-method)
+  ;; add chinese pinyin input method; do not need in mac any more, comment 
+  ;; (require 'chinese-pyim)
+  ;; (require 'chinese-pyim-greatdict)
+  ;; (chinese-pyim-greatdict-enable)
+  ;; (setq default-input-method "chinese-pyim")
+  ;; (global-set-key (kbd "C-\\") 'toggle-input-method)
 
   ;; make emacs try gb18030 encoding first when opening files
   (prefer-coding-system 'gb18030)
   (prefer-coding-system 'utf-8)
+  (setq large-file-warning-threshold 100000000)
+  
+  (setq org-directory "/Users/pp/Dropbox/org/")
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-list-allow-alphabetical t)
+  (require 'org2blog-autoloads)
+  (require 'auth-source)
+  (let (credentials)
+    ;; only required if your auth file is not already in the list of auth-sources
+    ;;(add-to-list 'auth-sources "~/.netrc")
+    (setq credentials (auth-source-user-and-password "wordpress"))
+    (setq org2blog/wp-blog-alist
+          `(("wordpress"
+             :url "https://programfantasy.com/xmlrpc.php"
+             :username ,(car credentials)
+             :password ,(cadr credentials)))))
+
+  ;; http://blog.binchen.org/posts/how-to-use-org2blog-effectively-as-a-programmer.html
+  ;; has half the instructions, but was missing
+  ;; `wp-use-sourcecode-shortcode` at the time of this writing, without
+  ;; which this does not work at all.
+
+  ;; * `M-x package-install RET htmlize` is required, else you get empty
+  ;; code blocks https://github.com/punchagan/org2blog/blob/master/org2blog.el
+  ;; * with wp-use-sourcecode-shortcode set to ‘t, org2blog will use 
+  ;; shortcodes, and hence the SyntaxHighlighter Evolved plugin on your blog.
+  ;; however, if you set this to nil, native Emacs highlighting will be used,
+  ;; implemented as HTML styling. Your pick!
+  (setq org2blog/wp-use-sourcecode-shortcode 't)
+  ;; removed light="true"
+  (setq org2blog/wp-sourcecode-default-params nil)
+  ;; target language needs to be in here
+  (setq org2blog/wp-sourcecode-langs
+        '("actionscript3" "bash" "coldfusion" "cpp" "csharp" "css" "delphi"
+          "erlang" "fsharp" "diff" "groovy" "javascript" "java" "javafx" "matlab"
+          "objc" "perl" "php" "text" "powershell" "python" "ruby" "scala" "sql"
+          "vb" "xml"
+          "sh" "emacs-lisp" "lisp" "lua"))
+
+  ;; this will use emacs syntax higlighting in your #+BEGIN_SRC
+  ;; <language> <your-code> #+END_SRC code blocks.
+  (setq org-src-fontify-natively t)
+  (setq org2blog/wp-default-title "title")
+  (setq org2blog/wp-default-categories "Uncategorized")
+  (setq org2blog/wp-buffer-template
+        "-----------------------
+#+TITLE: %s
+#+CATEGORY: %s
+#+TAGS: %s
+#+DATE: %s
+-----------------------\n")
+  (defun my-format-function (format-string)
+    (format format-string
+            org2blog/wp-default-title
+            org2blog/wp-default-categories
+            "other"
+            (format-time-string "%Y-%m-%d" (current-time))))
+  (setq org2blog/wp-buffer-format-function 'my-format-function)
+
 
   )
 
@@ -357,7 +428,7 @@ you should place your code here."
  '(exec-path-from-shell-arguments (quote ("-l")))
  '(package-selected-packages
    (quote
-    (rake minitest inf-ruby hide-comnt smartparens iedit anzu evil goto-chg undo-tree eval-sexp-fu highlight f s diminish projectile pkg-info epl counsel swiper ivy bind-map bind-key packed dash ace-window helm avy helm-core async popup package-build powerline pcre2el spinner hydra parent-mode request flx chinese-pyim-basedict org alert log4e gntp markdown-mode htmlize gitignore-mode git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter flyspell-correct pos-tip flycheck magit magit-popup git-commit with-editor php-mode diff-hl company yasnippet auto-complete define-word yapfify yaml-mode xterm-color ws-butler window-numbering which-key wgrep web-mode web-beautify volatile-highlights visual-regexp-steroids vi-tilde-fringe uuidgen use-package toc-org tiny tide tagedit spacemacs-theme spaceline smex smeargle slim-mode sicp shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restclient restart-emacs rbenv ranger rainbow-mode rainbow-identifiers rainbow-delimiters racket-mode quelpa pyvenv pytest pyenv-mode py-isort pug-mode projectile-rails prodigy popwin pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode peep-dired pbcopy paradox osx-trash osx-dictionary origami orgit org-projectile org-present org-pomodoro org-plus-contrib org-octopress org-download org-bullets open-junk-file ob-http nodejs-repl neotree mwim multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow magit-gh-pulls macrostep lua-mode lorem-ipsum livid-mode live-py-mode lispy linum-relative link-hint less-css-mode launchctl js2-refactor js-doc ivy-hydra info+ indent-guide impatient-mode ido-vertical-mode ibuffer-projectile hy-mode hungry-delete hl-todo hl-anything highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-github-stars helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot glsl-mode github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist gh-md ggtags flyspell-correct-ivy flyspell-correct-helm flycheck-pos-tip flx-ido find-file-in-project fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu etags-select eshell-z eshell-prompt-extras esh-help enh-ruby-mode engine-mode emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode dockerfile-mode docker discover-my-major disaster deft cython-mode counsel-projectile company-web company-tern company-statistics company-c-headers company-auctex company-anaconda column-enforce-mode color-identifiers-mode coffee-mode cmake-font-lock clojure-snippets clj-refactor clean-aindent-mode clang-format cider-eval-sexp-fu chruby chinese-pyim-greatdict chinese-pyim bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-link ace-jump-helm-line ac-ispell 4clojure)))
+    (org2blog metaweblog xml-rpc anaconda-mode pythonic skewer-mode simple-httpd json-mode json-snatcher json-reformat multiple-cursors js2-mode dash-functional tern sql-indent csv-mode nginx-mode haml-mode web-completion-data rake minitest inf-ruby hide-comnt smartparens iedit anzu evil goto-chg undo-tree eval-sexp-fu highlight f s diminish projectile pkg-info epl counsel swiper ivy bind-map bind-key packed dash ace-window helm avy helm-core async popup package-build powerline pcre2el spinner hydra parent-mode request flx chinese-pyim-basedict org alert log4e gntp markdown-mode htmlize gitignore-mode git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter flyspell-correct pos-tip flycheck magit magit-popup git-commit with-editor php-mode diff-hl company yasnippet auto-complete define-word yapfify yaml-mode xterm-color ws-butler window-numbering which-key wgrep web-mode web-beautify volatile-highlights visual-regexp-steroids vi-tilde-fringe uuidgen use-package toc-org tiny tide tagedit spacemacs-theme spaceline smex smeargle slim-mode sicp shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restclient restart-emacs rbenv ranger rainbow-mode rainbow-identifiers rainbow-delimiters racket-mode quelpa pyvenv pytest pyenv-mode py-isort pug-mode projectile-rails prodigy popwin pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode peep-dired pbcopy paradox osx-trash osx-dictionary origami orgit org-projectile org-present org-pomodoro org-plus-contrib org-octopress org-download org-bullets open-junk-file ob-http nodejs-repl neotree mwim multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow magit-gh-pulls macrostep lua-mode lorem-ipsum livid-mode live-py-mode lispy linum-relative link-hint less-css-mode launchctl js2-refactor js-doc ivy-hydra info+ indent-guide impatient-mode ido-vertical-mode ibuffer-projectile hy-mode hungry-delete hl-todo hl-anything highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-github-stars helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot glsl-mode github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist gh-md ggtags flyspell-correct-ivy flyspell-correct-helm flycheck-pos-tip flx-ido find-file-in-project fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu etags-select eshell-z eshell-prompt-extras esh-help enh-ruby-mode engine-mode emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode dockerfile-mode docker discover-my-major disaster deft cython-mode counsel-projectile company-web company-tern company-statistics company-c-headers company-auctex company-anaconda column-enforce-mode color-identifiers-mode coffee-mode cmake-font-lock clojure-snippets clj-refactor clean-aindent-mode clang-format cider-eval-sexp-fu chruby chinese-pyim-greatdict chinese-pyim bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-link ace-jump-helm-line ac-ispell 4clojure)))
  '(paradox-github-token t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
