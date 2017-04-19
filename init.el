@@ -48,7 +48,7 @@ values."
      ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      ivy
-     helm
+     ;; helm
      osx
      auto-completion
      better-defaults
