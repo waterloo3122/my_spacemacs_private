@@ -422,6 +422,7 @@ you should place your code here."
             "other"
             (format-time-string "%Y-%m-%d" (current-time))))
   (setq org2blog/wp-buffer-format-function 'my-format-function)
+  (global-hl-line-mode -1);disable current line highlight
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
