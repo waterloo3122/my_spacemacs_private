@@ -31,7 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     python
+     ;; python                             ;
      javascript
      sql
      csv
@@ -366,7 +366,7 @@ you should place your code here."
   (prefer-coding-system 'utf-8)
   (setq large-file-warning-threshold 100000000)
   
-  (setq org-directory "/Users/pp/Dropbox/org/")
+  (setq org-directory "/Home/pp/Dropbox/org/")
   (setq org-default-notes-file (concat org-directory "/notes.org"))
   (setq org-list-allow-alphabetical t)
   (require 'org2blog-autoloads)
