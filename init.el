@@ -56,9 +56,9 @@ values."
      git
      markdown
      org
-     ;;     (shell :variables
-     ;;       shell-default-height 30
-     ;;       shell-default-position 'bottom)
+     (shell :variables shell-default-height 30
+            :variables shell-default-position 'bottom
+            )
      (spell-checking :variables spell-checking-enable-auto-dictionary t
                      :variables spell-checking-enable-by-default t
                      :variables =enable-flyspell-auto-completion= t
