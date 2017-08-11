@@ -49,16 +49,16 @@ values."
      ;; ----------------------------------------------------------------
      ivy
      helm
-     osx
+     ;; osx
      auto-completion
-     better-defaults
+     ;; better-defaults
      emacs-lisp
      git
      markdown
      org
-     (shell :variables shell-default-height 30
-            :variables shell-default-position 'bottom
-            )
+     (shell :variables
+            shell-default-height 30
+            shell-default-position 'bottom)
      (spell-checking :variables spell-checking-enable-auto-dictionary t
                      :variables spell-checking-enable-by-default t
                      :variables =enable-flyspell-auto-completion= t
@@ -422,6 +422,18 @@ you should place your code here."
             "other"
             (format-time-string "%Y-%m-%d" (current-time))))
   (setq org2blog/wp-buffer-format-function 'my-format-function)
+
+  ;; functions from zilongshanren to save and load layouts
+  (defun pp/load-my-layout ()
+    (interactive)
+    (persp-load-state-from-file (concat persp-save-dir "pp")))
+
+  (defun pp/save-my-layout ()
+    (interactive)
+    (persp-save-state-to-file (concat persp-save-dir "pp")))
+
+  (spacemacs/set-leader-keys "oll" 'pp/load-my-layout)
+  (spacemacs/set-leader-keys "ols" 'pp/save-my-layout)
 
   ;;disable current line highlight
   (global-hl-line-mode -1)
