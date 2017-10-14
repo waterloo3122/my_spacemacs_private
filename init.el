@@ -77,6 +77,7 @@ values."
                                       metaweblog
                                       org2blog
                                       htmlize
+                                      php-boris
                                       ;;chinese-pyim
                                       ;;chinese-pyim-greatdict
                                       )
@@ -161,7 +162,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 14 
+                               :size 16 
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -321,10 +322,10 @@ before packages are loaded. If you are unsure, you should try in setting them in
     ;;(setq tramp-ssh-controlmaster-options
     ;;    "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 
-    (setq configuration-layer--elpa-archives
-        '(("melpa-cn" . "https://elpa.zilongshanren.com/melpa/")
-          ("org-cn"   . "https://elpa.zilongshanren.com/org/")
-          ("gnu-cn"   . "https://elpa.zilongshanren.com/gnu/")))
+    ;; (setq configuration-layer--elpa-archives
+    ;;     '(("melpa-cn" . "https://elpa.zilongshanren.com/melpa/")
+    ;;       ("org-cn"   . "https://elpa.zilongshanren.com/org/")
+    ;;       ("gnu-cn"   . "https://elpa.zilongshanren.com/gnu/")))
 
     (when (eq system-type 'darwin)
         (setq insert-directory-program "/usr/local/bin/gls")
@@ -440,6 +441,54 @@ you should place your code here."
 
   ;;use American English as ispell default dictionary, do not check chinese
   (ispell-change-dictionary "american" t)
+
+  ;; add php support for org mode
+  ;; (add-to-list 'org-babel-load-languages '(php . t))
+  ;; (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+  ;; (eval-after-load 'org
+  ;;    (lambda()
+  ;;      ;; (require 'ess-site)
+  ;;      ;; (require 'ob-R)
+  ;;      (require 'ob-emacs-lisp)
+  ;;      ;;(require 'ob-latex)
+  ;;      ;; (require 'octave)
+  ;;      (require 'ob-python)
+  ;;      ;; (require 'ob-sql)
+  ;;      (require 'ob-shell)
+  ;;      ;; (require 'ob-sqlite)
+  ;;      ;; (require 'ob-julia)
+  ;;      ;; (require 'ob-perl)
+  ;;      (require 'ob-org)
+  ;;      ;; (require 'ob-awk)
+  ;;      ;; (require 'ob-sed)
+  ;;      ;; (require 'ob-css)
+  ;;      ;; (require 'ob-js)
+  ;;      ;; (require 'ob-stata)
+  ;;      (require 'ob-php)
+
+  ;;      (setq org-export-babel-evaluate nil)
+  ;;      (setq org-startup-indented t)
+  ;;      ;; increase imenu depth to include third level headings
+  ;;      (setq org-imenu-depth 3)
+  ;;      ;; Set sensible mode for editing dot files
+  ;;      (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+  ;;      ;; Update images from babel code blocks automatically
+  ;;      (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+  ;;      (setq org-src-fontify-natively t)
+  ;;      (setq org-src-tab-acts-natively t)
+  ;;      (setq org-confirm-babel-evaluate nil)))
+  (with-eval-after-load 'org
+    ;; (with-temp-buffer
+    ;;   (url-insert-file-contents "https://raw.github.com/steckerhalter/ob-php/master/ob-php.el")
+    ;;   (eval-buffer))
+    (add-to-list 'load-path "/home/pp/.spacemacs.d/lisp");
+    (require 'ob-php)
+
+    (add-to-list 'org-babel-load-languages '(php . t))
+    (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+
+    )
+
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -452,7 +501,7 @@ you should place your code here."
  '(exec-path-from-shell-arguments (quote ("-l")))
  '(package-selected-packages
    (quote
-    (winum unfill fuzzy org2blog metaweblog xml-rpc anaconda-mode pythonic skewer-mode simple-httpd json-mode json-snatcher json-reformat multiple-cursors js2-mode dash-functional tern sql-indent csv-mode nginx-mode haml-mode web-completion-data rake minitest inf-ruby hide-comnt smartparens iedit anzu evil goto-chg undo-tree eval-sexp-fu highlight f s diminish projectile pkg-info epl counsel swiper ivy bind-map bind-key packed dash ace-window helm avy helm-core async popup package-build powerline pcre2el spinner hydra parent-mode request flx chinese-pyim-basedict org alert log4e gntp markdown-mode htmlize gitignore-mode git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter flyspell-correct pos-tip flycheck magit magit-popup git-commit with-editor php-mode diff-hl company yasnippet auto-complete define-word yapfify yaml-mode xterm-color ws-butler window-numbering which-key wgrep web-mode web-beautify volatile-highlights visual-regexp-steroids vi-tilde-fringe uuidgen use-package toc-org tiny tide tagedit spacemacs-theme spaceline smex smeargle slim-mode sicp shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restclient restart-emacs rbenv ranger rainbow-mode rainbow-identifiers rainbow-delimiters racket-mode quelpa pyvenv pytest pyenv-mode py-isort pug-mode projectile-rails prodigy popwin pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode peep-dired pbcopy paradox osx-trash osx-dictionary origami orgit org-projectile org-present org-pomodoro org-plus-contrib org-octopress org-download org-bullets open-junk-file ob-http nodejs-repl neotree mwim multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow magit-gh-pulls macrostep lua-mode lorem-ipsum livid-mode live-py-mode lispy linum-relative link-hint less-css-mode launchctl js2-refactor js-doc ivy-hydra info+ indent-guide impatient-mode ido-vertical-mode ibuffer-projectile hy-mode hungry-delete hl-todo hl-anything highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-github-stars helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot glsl-mode github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist gh-md ggtags flyspell-correct-ivy flyspell-correct-helm flycheck-pos-tip flx-ido find-file-in-project fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu etags-select eshell-z eshell-prompt-extras esh-help enh-ruby-mode engine-mode emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode dockerfile-mode docker discover-my-major disaster deft cython-mode counsel-projectile company-web company-tern company-statistics company-c-headers company-auctex company-anaconda column-enforce-mode color-identifiers-mode coffee-mode cmake-font-lock clojure-snippets clj-refactor clean-aindent-mode clang-format cider-eval-sexp-fu chruby chinese-pyim-greatdict chinese-pyim bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-link ace-jump-helm-line ac-ispell 4clojure)))
+    (php-boris org-category-capture winum unfill fuzzy org2blog metaweblog xml-rpc anaconda-mode pythonic skewer-mode simple-httpd json-mode json-snatcher json-reformat multiple-cursors js2-mode dash-functional tern sql-indent csv-mode nginx-mode haml-mode web-completion-data rake minitest inf-ruby hide-comnt smartparens iedit anzu evil goto-chg undo-tree eval-sexp-fu highlight f s diminish projectile pkg-info epl counsel swiper ivy bind-map bind-key packed dash ace-window helm avy helm-core async popup package-build powerline pcre2el spinner hydra parent-mode request flx chinese-pyim-basedict org alert log4e gntp markdown-mode htmlize gitignore-mode git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter flyspell-correct pos-tip flycheck magit magit-popup git-commit with-editor php-mode diff-hl company yasnippet auto-complete define-word yapfify yaml-mode xterm-color ws-butler window-numbering which-key wgrep web-mode web-beautify volatile-highlights visual-regexp-steroids vi-tilde-fringe uuidgen use-package toc-org tiny tide tagedit spacemacs-theme spaceline smex smeargle slim-mode sicp shell-pop scss-mode sass-mode rvm ruby-tools ruby-test-mode rubocop rspec-mode robe reveal-in-osx-finder restclient restart-emacs rbenv ranger rainbow-mode rainbow-identifiers rainbow-delimiters racket-mode quelpa pyvenv pytest pyenv-mode py-isort pug-mode projectile-rails prodigy popwin pip-requirements phpunit phpcbf php-extras php-auto-yasnippets persp-mode peep-dired pbcopy paradox osx-trash osx-dictionary origami orgit org-projectile org-present org-pomodoro org-plus-contrib org-octopress org-download org-bullets open-junk-file ob-http nodejs-repl neotree mwim multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow magit-gh-pulls macrostep lua-mode lorem-ipsum livid-mode live-py-mode lispy linum-relative link-hint less-css-mode launchctl js2-refactor js-doc ivy-hydra info+ indent-guide impatient-mode ido-vertical-mode ibuffer-projectile hy-mode hungry-delete hl-todo hl-anything highlight-parentheses highlight-numbers highlight-indentation help-fns+ helm-themes helm-swoop helm-pydoc helm-projectile helm-mode-manager helm-make helm-gtags helm-gitignore helm-github-stars helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag graphviz-dot-mode google-translate golden-ratio gnuplot glsl-mode github-search github-clone github-browse-file gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gist gh-md ggtags flyspell-correct-ivy flyspell-correct-helm flycheck-pos-tip flx-ido find-file-in-project fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu etags-select eshell-z eshell-prompt-extras esh-help enh-ruby-mode engine-mode emmet-mode elisp-slime-nav editorconfig dumb-jump drupal-mode dockerfile-mode docker discover-my-major disaster deft cython-mode counsel-projectile company-web company-tern company-statistics company-c-headers company-auctex company-anaconda column-enforce-mode color-identifiers-mode coffee-mode cmake-font-lock clojure-snippets clj-refactor clean-aindent-mode clang-format cider-eval-sexp-fu chruby chinese-pyim-greatdict chinese-pyim bundler auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile aggressive-indent adaptive-wrap ace-link ace-jump-helm-line ac-ispell 4clojure)))
  '(paradox-github-token t)
  '(undo-outer-limit 120000000))
 (custom-set-faces
@@ -460,4 +509,4 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#272822")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C")))))
