@@ -31,6 +31,8 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     yaml
+     python
      ;; python                             ;
      javascript
      sql
@@ -322,10 +324,10 @@ before packages are loaded. If you are unsure, you should try in setting them in
     ;;(setq tramp-ssh-controlmaster-options
     ;;    "-o ControlMaster=auto -o ControlPath='tramp.%%C' -o ControlPersist=no")
 
-    ;; (setq configuration-layer--elpa-archives
-    ;;     '(("melpa-cn" . "https://elpa.zilongshanren.com/melpa/")
-    ;;       ("org-cn"   . "https://elpa.zilongshanren.com/org/")
-    ;;       ("gnu-cn"   . "https://elpa.zilongshanren.com/gnu/")))
+    (setq configuration-layer--elpa-archives
+        '(("melpa-cn" . "https://elpa.zilongshanren.com/melpa/")
+          ("org-cn"   . "https://elpa.zilongshanren.com/org/")
+          ("gnu-cn"   . "https://elpa.zilongshanren.com/gnu/")))
 
     (when (eq system-type 'darwin)
         (setq insert-directory-program "/usr/local/bin/gls")
