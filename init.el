@@ -340,6 +340,8 @@ you should place your code here."
   ;; fix SPC p f wrong argment nil error
   (setq projectile-keymap-prefix (kbd "C-c C-p"))
 
+  (spacemacs/toggle-highlight-current-line-globally-off)
+
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
     (define-key company-active-map (kbd "M-p") nil)
@@ -363,7 +365,7 @@ you should place your code here."
   
   (setq org-directory "/Users/pp/Dropbox/org/")
   (setq org-default-notes-file (concat org-directory "/notes.org"))
-  (setq org-list-allow-alphabetical t)
+  (smetq org-list-allow-alphabetical t)
   (require 'org2blog-autoloads)
   (require 'auth-source)
   (let (credentials)
