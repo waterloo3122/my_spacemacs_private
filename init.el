@@ -337,6 +337,9 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  ;; fix SPC p f wrong argment nil error
+  (setq projectile-keymap-prefix (kbd "C-c C-p"))
+
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
     (define-key company-active-map (kbd "M-p") nil)
