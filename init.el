@@ -420,6 +420,15 @@ you should place your code here."
             (format-time-string "%Y-%m-%d" (current-time))))
   (setq org2blog/wp-buffer-format-function 'my-format-function)
   
+  ;; functions from zilongshanren to save and load layouts
+  (defun pp/load-my-layout ()
+    (interactive)
+    (persp-load-state-from-file (concat persp-save-dir "pp")))
+
+  (defun pp/save-my-layout ()
+    (interactive)
+    (persp-save-state-to-file (concat persp-save-dir "pp")))
+  
   ;; -*- lexical-binding: t -*-
 
 ;; Font settings.
