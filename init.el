@@ -428,6 +428,8 @@ you should place your code here."
   (defun pp/save-my-layout ()
     (interactive)
     (persp-save-state-to-file (concat persp-save-dir "pp")))
+  (spacemacs/set-leader-keys "oll" 'pp/load-my-layout)
+  (spacemacs/set-leader-keys "ols" 'pp/save-my-layout)
   
   ;; -*- lexical-binding: t -*-
 
